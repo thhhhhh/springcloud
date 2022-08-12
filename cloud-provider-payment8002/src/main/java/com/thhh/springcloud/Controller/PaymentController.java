@@ -5,13 +5,9 @@ import com.thhh.springcloud.entities.Payment;
 import com.thhh.springcloud.service.PaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -22,9 +18,6 @@ public class PaymentController {
 
     @Value("${server.port}")
     private String port;
-
-    @Resource
-    private DiscoveryClient discoveryClient;
 
     @PostMapping("create")
     public CommonResult create(@RequestBody Payment payment){
@@ -49,22 +42,5 @@ public class PaymentController {
             return new CommonResult(444, "数据查询失败，ID = " + id, null);
         }
 
-    }
-
-    @GetMapping("discovery")
-    public Object discovery(){
-        List<String> services = discoveryClient.getServices();
-        //获取所有eureka中的1服务信息
-        for (String service : services) {
-            log.info("================== > service = " + service);
-        }
-
-        //获取指定别名的服务信息
-        List<ServiceInstance> instances = discoveryClient.getInstances("CLOUD-PAYMENT-SERVICE");
-        for (ServiceInstance instance : instances) {
-            log.info(instance.getInstanceId() + "\t" +instance.getHost() + "\t" + instance.getPort() + "\t" + instance.getUri() + "\t" + instance.getServiceId() + "\t" +instance.getScheme() + "\t" + instance.getMetadata());
-        }
-
-        return discoveryClient;
     }
 }
