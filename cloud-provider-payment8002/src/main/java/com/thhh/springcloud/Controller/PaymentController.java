@@ -43,4 +43,10 @@ public class PaymentController {
         }
 
     }
+
+    @GetMapping(value = "lb")
+    public String getPaymentByLb() {
+        //只需要返回端口号即可，方便查看是哪台服务器进行的服务
+        return port;
+    }
 }

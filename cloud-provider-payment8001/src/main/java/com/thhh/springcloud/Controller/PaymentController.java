@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -66,5 +67,11 @@ public class PaymentController {
         }
 
         return discoveryClient;
+    }
+
+    @GetMapping(value = "lb")
+    public String getPaymentByLb() {
+        //只需要返回端口号即可，方便查看是哪台服务器进行的服务
+        return port;
     }
 }
