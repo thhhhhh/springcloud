@@ -5,9 +5,13 @@ import com.thhh.springcloud.entities.Payment;
 import com.thhh.springcloud.service.PaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -18,6 +22,9 @@ public class PaymentController {
 
     @Value("${server.port}")
     private String port;
+
+    @Resource
+    private DiscoveryClient discoveryClient;
 
     @PostMapping("create")
     public CommonResult create(@RequestBody Payment payment){
@@ -44,8 +51,31 @@ public class PaymentController {
 
     }
 
+    @GetMapping("discovery")
+    public Object discovery(){
+        List<String> services = discoveryClient.getServices();
+        //获取所有eureka中的1服务信息
+        for (String service : services) {
+            log.info("================== > service = " + service);
+        }
+
+        //获取指定别名的服务信息
+        List<ServiceInstance> instances = discoveryClient.getInstances("CLOUD-PAYMENT-SERVICE");
+        for (ServiceInstance instance : instances) {
+            log.info(instance.getInstanceId() + "\t" +instance.getHost() + "\t" + instance.getPort() + "\t" + instance.getUri() + "\t" + instance.getServiceId() + "\t" +instance.getScheme() + "\t" + instance.getMetadata());
+        }
+
+        return discoveryClient;
+    }
+
     @GetMapping(value = "lb")
     public String getPaymentByLb() {
+        try {
+            //人为让线程睡3秒再处理业务，这也是在模拟耗时比较长的业务逻辑，看默认情况下ribbon的反应
+            TimeUnit.SECONDS.sleep(3);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         //只需要返回端口号即可，方便查看是哪台服务器进行的服务
         return port;
     }
