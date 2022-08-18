@@ -10,6 +10,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -70,13 +71,18 @@ public class PaymentController {
 
     @GetMapping(value = "lb")
     public String getPaymentByLb() {
-        try {
+        /*try {
             //人为让线程睡3秒再处理业务，这也是在模拟耗时比较长的业务逻辑，看默认情况下ribbon的反应
             TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
         //只需要返回端口号即可，方便查看是哪台服务器进行的服务
         return port;
+    }
+
+    public static void main(String[] args) {
+        ZonedDateTime zbj = ZonedDateTime.now(); // 默认时区
+        System.out.println(zbj);
     }
 }
